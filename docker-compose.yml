@@ -22,7 +22,7 @@ services:
     restart: always
     environment:
       DATABASE_URL: "postgresql://anglo_user:anglo_password@postgres:5432/anglo_diver?schema=public"
-      JWT_SECRET: "change-this-secret-in-production"
+      JWT_SECRET: "${JWT_SECRET:-please-set-jwt-secret-environment-variable}"
       JWT_EXPIRES_IN: "7d"
       PORT: 3001
       NODE_ENV: production

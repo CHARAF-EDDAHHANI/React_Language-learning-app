@@ -12,6 +12,7 @@ const CourseDetail: React.FC = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [showLessonForm, setShowLessonForm] = useState(false);
   const [lessonTitle, setLessonTitle] = useState('');
   const [lessonContent, setLessonContent] = useState('');
@@ -71,16 +72,20 @@ const CourseDetail: React.FC = () => {
 
   const handleSubmitExercise = async (exerciseId: string) => {
     if (!exerciseAnswer.trim()) {
-      alert('Please provide an answer');
+      setError('Please provide an answer');
+      setSuccess('');
       return;
     }
 
     try {
       await studentService.submitExercise(exerciseId, exerciseAnswer);
       setExerciseAnswer('');
-      alert('Exercise submitted successfully!');
+      setError('');
+      setSuccess('Exercise submitted successfully!');
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError('Failed to submit exercise');
+      setSuccess('');
     }
   };
 
@@ -106,6 +111,7 @@ const CourseDetail: React.FC = () => {
       </div>
 
       {error && <div className="error">{error}</div>}
+      {success && <div className="success">{success}</div>}
 
       {isProfessor && (
         <>

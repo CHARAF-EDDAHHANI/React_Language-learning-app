@@ -243,6 +243,10 @@ export const submitExercise = async (
       return;
     }
 
+    // Note: Exercise completion is marked as true upon submission.
+    // This is a content-agnostic platform - professors can review submissions
+    // and implement their own grading/validation logic outside the platform.
+    // Future enhancement: Add configurable validation logic.
     const attempt = await prisma.exerciseAttempt.create({
       data: {
         userId: req.user.id,

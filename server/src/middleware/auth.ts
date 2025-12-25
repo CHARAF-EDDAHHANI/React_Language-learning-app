@@ -22,5 +22,6 @@ export const authenticate = (
     next();
   } catch (error) {
     res.status(401).json({ error: 'Invalid token' });
+    return;
   }
 };

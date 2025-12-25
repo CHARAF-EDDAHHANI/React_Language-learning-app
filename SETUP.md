@@ -182,7 +182,18 @@ If you prefer using Docker:
 
 1. Make sure you're in the project root directory
 
-2. Build and start all services:
+2. Set the JWT_SECRET environment variable:
+
+```bash
+export JWT_SECRET="your-super-secure-random-secret-key-here"
+```
+
+Or create a `.env` file in the root directory with:
+```
+JWT_SECRET=your-super-secure-random-secret-key-here
+```
+
+3. Build and start all services:
 
 ```bash
 docker-compose up -d
