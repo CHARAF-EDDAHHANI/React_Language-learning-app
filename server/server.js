@@ -1,35 +1,36 @@
-
-import express from 'express';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import cors from 'cors';
-import quizzesRoutes from "./routes/quizRoutes.js";
-import sessionsRoutes from "./routes/sessionRoutes.js"
-
-
+import express from "express";
+import cors from "cors";
+import { fileURLToPath } from "url";
+import path from "path";
+import quizRoutes from "./routes/quizRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const app = express();
-app.use(express.json());
-app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-app.use('/api/images', express.static(path.join(__dirname, 'engine', 'uploadedImages'))); // Serve uploaded images statically
-const filePath = path.join(process.cwd(), "data", "sessions.json");
 
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
-// handle default route
-app.get('/', (res) => {
-  res.send('API is running...');
+app.use("/api/quizzes", quizRoutes);
+app.use("/api/sessions", sessionRoutes);
+
+// Health check
+app.get("/healthz", (req, res) => {
+  res.send("Server is healthy");
 });
 
-app.use("/api/sessions", sessionsRoutes);
-app.use("/api/quizzes", quizzesRoutes);
+// Default route
+app.get("/", (req, res) => {
+  res.send("Anglo Diver API is running...");
+});
 
-
-// Server setup
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Server
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
