@@ -17,9 +17,22 @@ const fileKey = "sessions";
             };
             sessions.push(newSession);
             await writeJson(fileKey, sessions);
+            console.log("session created successfully");
             return newSession;
+
+    {/*return {
+      status: 201,
+      message: "Session created successfully",
+      data: newSession
+    };
+    */}
     }catch (error) {
         throw error
+
+        {/**return {
+      status: 500,
+      message: "Failed to create session"
+    }; */}
     }
  };
 

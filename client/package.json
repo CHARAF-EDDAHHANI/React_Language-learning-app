@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "start": "vite preview",
     "lint:client": "eslint client/src --ext .js,.jsx",
-    "lint:server": "eslint server --ext .js"},
+    "lint:server": "eslint server --ext .js"
+  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -21,7 +22,8 @@
     "framer-motion": "^12.18.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.6.0"
+    "react-router-dom": "^7.6.0",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@types/react": "^19.0.10",

@@ -18,16 +18,9 @@ import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
-
-  /* =====================
-     STATE
-  ====================== */
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-  /* =====================
-     HANDLERS (MUST BE FIRST)
-  ====================== */
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -45,15 +38,9 @@ const Header = () => {
     handleMobileMenuClose();
   };
 
-  /* =====================
-     DERIVED STATE
-  ====================== */
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  /* =====================
-     MENUS
-  ====================== */
   const menuId = 'primary-search-account-menu';
 
   const renderMenu = (
@@ -110,9 +97,7 @@ const Header = () => {
     </Menu>
   );
 
-  /* =====================
-     RENDER
-  ====================== */
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -134,7 +119,6 @@ const Header = () => {
               justifyContent: 'space-between',
             }}
           >
-            {/* Logo */}
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Box
                 sx={{
@@ -146,14 +130,14 @@ const Header = () => {
                 onClick={() => navigate('/')}
               >
                 <img
-                  src="/anglo-diver-logo.jpeg"
+                  src="icons/anglo-diver-logo.png"
                   alt="logo"
                   style={{ width: '100%', height: '100%' }}
                 />
               </Box>
             </Box>
 
-            {/* Right Icons */}
+
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {/* Mobile */}
               <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

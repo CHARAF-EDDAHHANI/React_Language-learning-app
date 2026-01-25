@@ -1,94 +1,88 @@
 import { useState } from "react";
 import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Chip,
   Button,
   Dialog,
-  DialogTitle,
   DialogContent,
+  DialogTitle,
   DialogActions,
   TextField,
   MenuItem,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 
-export default function QuizBoard({ onCreateQuiz }) {
+export default function QuizBoard({ onCreateQuiz, loading }) {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [level, setLevel] = useState("");
-  const [questions, setQuestions] = useState([]);
 
-  // Add a blank question
+  const [quizData, setQuizData] = useState({
+    title: "",
+    level: "",
+    questions: [],
+  });
+
+  /* ---------------- QUESTIONS ---------------- */
+
   const addQuestion = () => {
-    setQuestions(prev => [
+    setQuizData((prev) => ({
       ...prev,
-      { questionId: Date.now(), text: "", type: "fill_in_blank", options: [], answer: "" }
-    ]);
+      questions: [
+        ...prev.questions,
+        {
+          text: "",
+          type: "fill_in_blank",
+          options: [],
+          answer: "",
+        },
+      ],
+    }));
   };
 
-  // Remove a question
-  const removeQuestion = (id) => {
-    setQuestions(prev => prev.filter(q => q.questionId !== id));
+  const removeQuestion = (index) => {
+    setQuizData((prev) => ({
+      ...prev,
+      questions: prev.questions.filter((_, i) => i !== index),
+    }));
   };
 
-  // Update question text/type/answer
-  const updateQuestion = (id, key, value) => {
-    setQuestions(prev =>
-      prev.map(q => (q.questionId === id ? { ...q, [key]: value } : q))
+  const updateQuestion = (index, key, value) => {
+    const updated = [...quizData.questions];
+    updated[index][key] = value;
+    setQuizData((prev) => ({ ...prev, questions: updated }));
+  };
+
+  const addOption = (qIndex) => {
+    const updated = [...quizData.questions];
+    updated[qIndex].options.push("");
+    setQuizData((prev) => ({ ...prev, questions: updated }));
+  };
+
+  const updateOption = (qIndex, oIndex, value) => {
+    const updated = [...quizData.questions];
+    updated[qIndex].options[oIndex] = value;
+    setQuizData((prev) => ({ ...prev, questions: updated }));
+  };
+
+  const removeOption = (qIndex, oIndex) => {
+    const updated = [...quizData.questions];
+    updated[qIndex].options = updated[qIndex].options.filter(
+      (_, i) => i !== oIndex
     );
+    setQuizData((prev) => ({ ...prev, questions: updated }));
   };
 
-  // Add option for multiple_choice
-  const addOption = (id) => {
-    setQuestions(prev =>
-      prev.map(q => q.questionId === id ? { ...q, options: [...q.options, ""] } : q)
-    );
-  };
-
-  // Update option text
-  const updateOption = (qId, index, value) => {
-    setQuestions(prev =>
-      prev.map(q => {
-        if (q.questionId === qId) {
-          const newOptions = [...q.options];
-          newOptions[index] = value;
-          return { ...q, options: newOptions };
-        }
-        return q;
-      })
-    );
-  };
-
-  // Remove option
-  const removeOption = (qId, index) => {
-    setQuestions(prev =>
-      prev.map(q => {
-        if (q.questionId === qId) {
-          const newOptions = q.options.filter((_, i) => i !== index);
-          return { ...q, options: newOptions };
-        }
-        return q;
-      })
-    );
-  };
+  /* ---------------- CREATE ---------------- */
 
   const handleCreate = async () => {
-    if (!title || !level) return;
+    if (!quizData.title || !quizData.level || quizData.questions.length === 0)
+      return;
 
-    // Basic validation: remove questions without text
-    const filteredQuestions = questions.filter(q => q.text.trim() !== "");
-    await onCreateQuiz({ title, level, questions: filteredQuestions });
+    await onCreateQuiz(quizData);
 
-    // Reset
-    setTitle("");
-    setLevel("");
-    setQuestions([]);
+    setQuizData({ title: "", level: "", questions: [] });
     setOpen(false);
   };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <>
@@ -96,107 +90,122 @@ export default function QuizBoard({ onCreateQuiz }) {
         Create Quiz
       </Button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
         <DialogTitle>Create New Quiz</DialogTitle>
+
         <DialogContent>
           <TextField
             label="Quiz Title"
             fullWidth
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            sx={{ my: 1 }}
+            margin="normal"
+            value={quizData.title}
+            onChange={(e) =>
+              setQuizData((p) => ({ ...p, title: e.target.value }))
+            }
           />
+
           <TextField
             label="Level"
             fullWidth
-            value={level}
-            onChange={e => setLevel(e.target.value)}
-            sx={{ my: 1 }}
+            margin="normal"
+            value={quizData.level}
+            onChange={(e) =>
+              setQuizData((p) => ({ ...p, level: e.target.value }))
+            }
           />
 
-          <Typography variant="h6" sx={{ mt: 2 }}>Questions</Typography>
-
-          {questions.map((q, i) => (
-            <Card key={q.questionId} sx={{ p: 1, my: 1, position: "relative" }}>
-              <IconButton
-                onClick={() => removeQuestion(q.questionId)}
-                sx={{ position: "absolute", top: 0, right: 0 }}
-              >
+          {quizData.questions.map((q, qIndex) => (
+            <div key={qIndex} style={{ marginTop: 16 }}>
+              <IconButton onClick={() => removeQuestion(qIndex)}>
                 <Delete />
               </IconButton>
 
               <TextField
-                label={`Question ${i + 1}`}
+                label={`Question ${qIndex + 1}`}
                 fullWidth
+                margin="normal"
                 value={q.text}
-                onChange={e => updateQuestion(q.questionId, "text", e.target.value)}
-                sx={{ my: 1 }}
+                onChange={(e) =>
+                  updateQuestion(qIndex, "text", e.target.value)
+                }
               />
 
               <TextField
                 select
                 label="Type"
-                value={q.type}
-                onChange={e => updateQuestion(q.questionId, "type", e.target.value)}
                 fullWidth
-                sx={{ my: 1 }}
+                margin="normal"
+                value={q.type}
+                onChange={(e) =>
+                  updateQuestion(qIndex, "type", e.target.value)
+                }
               >
                 <MenuItem value="fill_in_blank">Fill in the blank</MenuItem>
                 <MenuItem value="multiple_choice">Multiple Choice</MenuItem>
               </TextField>
+
               {q.type === "fill_in_blank" && (
                 <TextField
-                    label="Correct Answer"
-                    fullWidth
-                    value={q.answer}
-                    onChange={e => updateQuestion(q.questionId, "answer", e.target.value)}
-                    sx={{ my: 1 }}
-                  />
+                  label="Correct Answer"
+                  fullWidth
+                  margin="normal"
+                  value={q.answer}
+                  onChange={(e) =>
+                    updateQuestion(qIndex, "answer", e.target.value)
+                  }
+                />
               )}
+
               {q.type === "multiple_choice" && (
                 <>
-                  {q.options.map((opt, idx) => (
-                    <Grid container spacing={1} key={idx} sx={{ my: 0.5 }}>
-                      <Grid item xs={10}>
-                        <TextField
-                          label={`Option ${idx + 1}`}
-                          fullWidth
-                          value={opt}
-                          onChange={e => updateOption(q.questionId, idx, e.target.value)}
-                        />
-                      </Grid>
-                      <Grid item xs={2}>
-                        <IconButton onClick={() => removeOption(q.questionId, idx)}>
-                          <Delete />
-                        </IconButton>
-                      </Grid>
-                    </Grid>
+                  {q.options.map((opt, oIndex) => (
+                    <div key={oIndex} style={{ display: "flex", gap: 8 }}>
+                      <TextField
+                        label={`Option ${oIndex + 1}`}
+                        fullWidth
+                        value={opt}
+                        onChange={(e) =>
+                          updateOption(qIndex, oIndex, e.target.value)
+                        }
+                      />
+                      <IconButton
+                        onClick={() => removeOption(qIndex, oIndex)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </div>
                   ))}
-                  <Button onClick={() => addOption(q.questionId)} sx={{ mt: 1 }}>
+                  <Button onClick={() => addOption(qIndex)}>
                     Add Option
                   </Button>
 
                   <TextField
                     label="Correct Answer"
                     fullWidth
+                    margin="normal"
                     value={q.answer}
-                    onChange={e => updateQuestion(q.questionId, "answer", e.target.value)}
-                    sx={{ my: 1 }}
+                    onChange={(e) =>
+                      updateQuestion(qIndex, "answer", e.target.value)
+                    }
                   />
                 </>
               )}
-            </Card>
+            </div>
           ))}
 
-          <Button variant="outlined" startIcon={<Add />} onClick={addQuestion} sx={{ mt: 1 }}>
+          <Button startIcon={<Add />} onClick={addQuestion} sx={{ mt: 2 }}>
             Add Question
           </Button>
         </DialogContent>
 
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleCreate}>
-            Create Quiz
+          <Button
+            variant="contained"
+            onClick={handleCreate}
+            disabled={loading}
+          >
+            {loading ? "Creating..." : "Create"}
           </Button>
         </DialogActions>
       </Dialog>

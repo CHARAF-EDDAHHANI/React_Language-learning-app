@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import quizRoutes from "./routes/quizRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
+import assignmentRoutes from './routes/assignmentRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/quizzes", quizRoutes);
 app.use("/sessions", sessionRoutes);
+app.use("/assignments", assignmentRoutes);
 
 // Health check
 app.get("/healthz", (req, res) => {
