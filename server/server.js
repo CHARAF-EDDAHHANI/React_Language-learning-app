@@ -5,11 +5,15 @@ import path from "path";
 import quizRoutes from "./routes/quizRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import assignmentRoutes from './routes/assignmentRoutes.js';
+import mediaRoutes from './routes/mediaRoutes.js';
+
+const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+// Serve media folder as static
+app.use('/media', express.static(path.join(__dirname, 'data', 'media')));
 
 // Middleware
 app.use(cors());
@@ -20,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/quizzes", quizRoutes);
 app.use("/sessions", sessionRoutes);
 app.use("/assignments", assignmentRoutes);
-
+app.use('/media', mediaRoutes);
 // Health check
 app.get("/healthz", (req, res) => {
   res.send("Server is healthy");

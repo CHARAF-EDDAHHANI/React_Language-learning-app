@@ -10,6 +10,7 @@ const paths = {
   sessions: path.join(__dirname, '../data/sessions.json'),
   quizzes: path.join(__dirname, '../data/quizzes.json'),
   assignments : path.join(__dirname, '../data/assignments.json'),
+  media : path.join(__dirname, '../data/media.json'),
 
 };
 
