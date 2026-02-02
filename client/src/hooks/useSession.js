@@ -15,9 +15,7 @@ export const useSession = () => {
       toast.success("Session created successfully");
       return newSession;
     } catch (err) {
-      const message =
-        err?.message || "Failed to create session";
-
+      const message = err?.message || "Failed to create session";
       setError(message);
       toast.error(message);
       throw err;
@@ -26,9 +24,5 @@ export const useSession = () => {
     }
   };
 
-  return {
-    createSession,
-    loading,
-    error,
-  };
+  return { createSession, loading, error };
 };

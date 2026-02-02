@@ -3,28 +3,29 @@ const API_URL =
     ? import.meta.env.VITE_API_LOCAL
     : import.meta.env.VITE_API_PROD;
 
+/**
+ * Create a new session
+ * @param {Object} sessionData - { title, type, level, course_content }
+ */
 export const createSession = async (sessionData) => {
   const res = await fetch(`${API_URL}/sessions`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", },
-    body: JSON.stringify(sessionData),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(sessionData), // course_content contains uploaded media URLs
   });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Failed to create session");
-  }
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Failed to create session");
 
-  return res.json();
+  return data;
 };
 
+/**
+ * Fetch all sessions
+ */
 export const fetchSessions = async () => {
   const res = await fetch(`${API_URL}/sessions`);
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Failed to fetch sessions");
-  }
-
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Failed to fetch sessions");
+  return data;
 };
